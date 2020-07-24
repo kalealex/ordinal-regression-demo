@@ -1,7 +1,7 @@
 ---
 title: "Ordinal Regression Demo"
 author: "Alex Kale"
-date: "6/2/2020"
+date: "7/24/2020"
 output: html_document
 ---
 
@@ -319,4 +319,4 @@ This looks pretty similar to the simpler model we fit previously. Let's compare 
 loo(m1, m3)
 ```
 
-It looks like the more complex model (m3) fits slightly better, even after we adjust for overfitting. It is common practice to run a handful of model, expanding from simpler to more complex specifications, and compare them all using posterior predictive visualizations and metrics like loo cross-validation.
+It looks like the more complex model (m3) fits slightly better, even after we adjust for overfitting. It is common practice to run a handful of models, expanding from simpler to more complex specifications, and compare them all using posterior predictive visualizations and procedures like loo cross-validation.
