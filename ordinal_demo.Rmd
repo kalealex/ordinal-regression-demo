@@ -142,7 +142,27 @@ spec <- data %>%
 animate(spec, fps = 2.5)
 ```
 
-This shows us in detail how uncertain the model is about the distribution of responses in each condition. However, it does not give us a sense of inferential uncertainty. One common way that researchers tend to make inferences with Likert-style responses is to model differences in average response. We can do the same thing with the output of the ordinal regression model, and we can do so without assuming that these discrete responses are the outcome of an untransformed linear model (e.g., ANOVA).
+This shows us in detail how uncertain the model is about the distribution of responses in each condition. However, this overview might not reveal potential issues like skewed distributions of predictions. To do a more granular posterior predictive check, let's compare observed and predicted ratings for individual subjects.
+
+```{r}
+spec <- data %>%
+  add_predicted_draws(m1, seed = 14, n = 50) %>%
+  mutate(
+    observed = ordered(response, levels = c("1","2","3","4","5")),
+    predicted = ordered(.prediction, levels = c("1","2","3","4","5"))) %>%
+  pivot_longer(cols = c("observed", "predicted"), names_to = "source", values_to = "rating") %>%
+  ggplot(aes(x = rating, fill = source)) +
+    geom_bar(position = position_dodge()) +
+    theme_minimal() +
+    facet_wrap(. ~ subject) +
+    transition_manual(.draw)
+
+animate(spec, fps = 2.5)
+```
+
+In this chart, we can see that our model predictions skew toward extreme ratings compared to a subset of participants who do not utilize the whole response scale (i.e., all possible responses 1-5). This may or may not be an issue depending on whether we want to use the model to predict behavior at the individual or group level.
+
+Neither of these posterior predictive checks give us much sense of inferential uncertainty. One common way that researchers tend to make inferences with Likert-style responses is to model differences in average response. We can do the same thing with the output of the ordinal regression model, and we can do so without assuming that these discrete responses are the outcome of an untransformed linear model (e.g., ANOVA).
 
 Let's find the average response in each condition, conditioning on the average user (i.e., no longer including random effects in our predictions). Note that now we are taking the average rating in each condition for each draw, giving us a distribution of inferential uncertainty about average responses (i.e., a sampling distribution of average response) rather than a wider distribution of predictive uncertainty about non-aggregated responses.
 
